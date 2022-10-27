@@ -119,38 +119,43 @@ def jouer():
         Map[bestMove//3][bestMove%3]="X"
         canvas.create_image(80*(bestMove%3)+5, 66*(bestMove//3)+5, anchor=NW, image=joueur2, tags="image")
         tour+=1
-        check()
+        if tour>=3 :
+            check("bot")
     
-    def check():
+    def check(qui):
         global tour,Map
-        print(Map)
+        jg=""
         for i in range(3):
             if Map[i][0]==Map[i][1]==Map[i][2]=="X":
                 canvas.create_line(45,i*65+40,205,i*65+40, fill=couleurs[1], width=5, tags="ligne")
-                fin("Joueur 2")
+                jg="Joueur 2"
             elif Map[i][0]==Map[i][1]==Map[i][2]=="O":
                 canvas.create_line(45,i*65+40,205,i*65+40, fill=couleurs[0], width=5, tags="ligne")
-                fin("Joueur 1")
+                jg="Joueur 1"
             elif Map[0][i]==Map[1][i]==Map[2][i]=="X":
                 canvas.create_line(i*80+45,40,i*80+45,175, fill=couleurs[1], width=5, tags="ligne")
-                fin("Joueur 2")
+                jg="Joueur 2"
             elif Map[0][i]==Map[1][i]==Map[2][i]=="O":
                 canvas.create_line(i*80+45,40,i*80+45,175, fill=couleurs[0], width=5, tags="ligne")
-                fin("Joueur 1")
+                jg="Joueur 1"
             elif Map[0][0]==Map[1][1]==Map[2][2]=="X":
                 canvas.create_line(45,40,205,175, fill=couleurs[1], width=5, tags="ligne")
-                fin("Joueur 2")
+                jg="Joueur 2"
             elif Map[0][0]==Map[1][1]==Map[2][2]=="O":
                 canvas.create_line(45,40,205,175, fill=couleurs[0], width=5, tags="ligne")
-                fin("Joueur 1")
+                jg="Joueur 1"
             elif Map[0][2]==Map[1][1]==Map[2][0]=="X":
                 canvas.create_line(205,40,45,175, fill=couleurs[1], width=5, tags="ligne")
-                fin("Joueur 2")
+                jg="Joueur 2"
             elif Map[0][2]==Map[1][1]==Map[2][0]=="O":
                 canvas.create_line(205,40,45,175, fill=couleurs[0], width=5, tags="ligne")
-                fin("Joueur 1")
+                jg="Joueur 1"
             elif i==2 and tour==9:
-                fin("Egalité")
+                jg="Egalité"
+        if jg!="":
+            fin(jg)
+        elif nbjoueurs.get()==1 and qui=="bouton":
+            Bot()
 
     def Bouton(event):
         global tour,Map,joueur2,joueur1
@@ -161,7 +166,6 @@ def jouer():
             if 66*i+5<=event.y<=60+80*i:
                 x=i
         if x!=-1 and y!=-1:
-            print(x,y)
             if Map[x][y]=="":
                 if debut==1:
                     if tour%2:
@@ -178,12 +182,13 @@ def jouer():
                         Map[x][y]="X"
                         canvas.create_image(80*y+5, 66*x+5, anchor=NW, image=joueur2, tags="image")
                 tour+=1
-                check()
-                if nbjoueurs.get()==1:
+                if tour>=3 :
+                    check("bouton")
+                elif nbjoueurs.get()==1 :
                     Bot()
 
     def fin(Gagnant):
-        global tour,Map,debut,score,nbparties,nbvj1,nbvj2,nbjoueurs
+        global tour,Map,debut,score,nbparties,nbvj1,nbvj2,nbjoueurs,joueur1,joueur2,couleurs
         Map=[["","",""],["","",""],["","",""]]
         if Gagnant=="Egalité":
             messagebox.showinfo(title="Égalité", message="Égalité")
@@ -204,7 +209,7 @@ def jouer():
             can=Canvas(win,width=GameOver.width(), height=GameOver.height())
             can.create_image(2, 2, anchor=NW, image=GameOver, tags="image")
             can.pack(fill=BOTH, expand=1)
-            message="Le score est actuellement de : "+str(score[0])+" pour le joueur 1 et : "+str(score[1])+" pour le joueur 2. Voulez vous recommencer ?"
+            message="Le score est actuellement de "+str(score[0])+" pour le joueur 1 et "+str(score[1])+" pour le joueur 2. Voulez vous recommencer ?"
             Recommencer=messagebox.askretrycancel(title="Recommencer ?",message=message)
             if Recommencer==True:
                 canvas.delete("ligne")
@@ -228,7 +233,7 @@ def jouer():
             canvas.delete("ligne")
             canvas.delete("image")
             tour=0
-            message="Le score est actuellement de : "+str(score[0])+" pour le joueur 1 et : "+str(score[1])+" pour le joueur 2."
+            message="Le score est actuellement de "+str(score[0])+" pour le joueur 1 et "+str(score[1])+" pour le joueur 2."
             messagebox.showinfo(title="Score", message=message)
             if randint(1,2)==1:
                 messagebox.showinfo(title="Joueur qui commence", message="Le joueur qui commence est le joueur 1.")
